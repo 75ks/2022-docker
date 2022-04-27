@@ -1,0 +1,49 @@
+version: '3.6'
+services:
+  mysql:
+    container_name: mysql
+    build: ./mysql
+    environment:
+      MYSQL_DATABASE: mysqldb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      # 初期データ投入
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d
+      # DBの永続化
+      - mysql_db:/var/lib/mysql
+  backend:
+    container_name: backend
+    build: ./spring
+    depends_on:
+      # mysqlが起動してから、backendを起動
+      - mysql
+    ports:
+      # 通常用
+      - "8080:8080"
+      # デバッグ用
+      - "5050:5050"
+    tty: true
+    volumes:
+      - ../2022-server:/srv:cached
+    working_dir: /srv
+    # spring bootを起動
+    command: /bin/bash -c "./gradlew bootRun"
+  frontend:
+    container_name: frontend
+    build: ./vue
+    ports:
+      - 3000:3000
+    volumes:
+      - ../2022-front:/usr/src/app:cached
+    stdin_open: true
+    tty: true
+    # コンテナ向けのinitプログラムを追加
+    init: true
+# DBの永続化先
+volumes:
+  mysql_db:
+    driver: local
