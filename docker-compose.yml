@@ -43,6 +43,8 @@ services:
     tty: true
     # コンテナ向けのinitプログラムを追加
     init: true
+    # vueを起動
+    command: /bin/bash -c "npm install && npm run dev"
 # DBの永続化先
 volumes:
   mysql_db:

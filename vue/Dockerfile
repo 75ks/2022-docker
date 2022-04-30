@@ -5,8 +5,4 @@ FROM node:16.14.2
 WORKDIR /usr/src/app/
 
 # 必要パッケージをインストール
-RUN npm install -g npm && \
-    npm install -g @vue/cli
-
-# サーバーを起動
-CMD [ "npm", "run", "serve" ]
+RUN npm install -g npm
